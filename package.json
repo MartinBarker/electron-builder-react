@@ -3,7 +3,12 @@
   "version": "0.1.0",
   "description": "A simple starter project to get up and developing quickly with the blend of React and Electron JS for building a Native Desktop App on various OS Platforms like Windows, Linux and macOS using Electron Builder.",
   "main": "main.js",
-  "author": "Souleh Shaikh <author.souleh@thegeekytutor.com>",
+  "type": "module",
+  "author": {
+    "name": "Martin Barker",
+    "email": "martinbarker99@gmail.com",
+    "url": "https://martinbarker.me/digify"
+  },
   "license": "MIT",
   "private": false,
   "repository": {
@@ -14,23 +19,173 @@
     "url": "https://github.com/soulehshaikh99/create-react-electron-app/issues"
   },
   "build": {
-    "icon": "public/logo512.png",
-    "productName": "React and Electron App",
-    "files": [
-      "build/**/*",
-      "main.js"
-    ],
     "extraMetadata": {
       "main": "main.js"
+    },
+    "afterSign": "scripts/notarize.js",
+    "directories": {
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "src/",
+      "src/**/*",
+      "build/**/*"
+    ],
+    "asar": {
+      "smartUnpack": true
     },
     "win": {
       "target": [
         "nsis-web",
-        "portable"
+        "portable",
+        "appx"
       ]
     },
-    "linux": {},
-    "mac": {}
+    "appx": {
+      "applicationId": "RenderTune",
+      "identityName": "1845martinbarker.digify",
+      "publisher": "CN=E69B865D-5831-4BE5-9AA4-08E27DAAD66C",
+      "publisherDisplayName": "martinbarker",
+      "backgroundColor": "#a0beeb"
+    },
+    "mac": {
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "entitlements.mac.plist",
+      "entitlementsInherit": "entitlements.mac.plist",
+      "appId": "com.martinbarker.digifyunique",
+      "artifactName": "${productName}-${os}.${ext}",
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "asarUnpack": [
+        "node_modules/trash/**"
+      ],
+      "electronLanguages": [
+        "en"
+      ],
+      "fileAssociations": [
+        {
+          "ext": [
+            "webm",
+            "mkv",
+            "flv",
+            "vob",
+            "ogv",
+            "drc",
+            "gif",
+            "gifv",
+            "mng",
+            "avi",
+            "mts",
+            "m2ts",
+            "ts",
+            "mov",
+            "qt",
+            "wmv",
+            "yuv",
+            "rm",
+            "rmvb",
+            "asf",
+            "amv",
+            "mp4",
+            "m4v",
+            "mpg",
+            "mp2",
+            "mpeg",
+            "mpe",
+            "mpv",
+            "m2v",
+            "svi",
+            "3gp",
+            "3g2",
+            "mxf",
+            "roq",
+            "nsv",
+            "f4v",
+            "f4p",
+            "f4a",
+            "f4b"
+          ],
+          "name": "Video",
+          "description": "Video files",
+          "role": "Viewer"
+        },
+        {
+          "ext": [
+            "aa",
+            "aac",
+            "aax",
+            "act",
+            "aiff",
+            "alac",
+            "amr",
+            "ape",
+            "au",
+            "awb",
+            "dct",
+            "dss",
+            "dvf",
+            "flac",
+            "gsm",
+            "iklax",
+            "ivs",
+            "m4a",
+            "m4b",
+            "m4p",
+            "mmf",
+            "mp3",
+            "mpc",
+            "msv",
+            "nmf",
+            "nsf",
+            "ogg",
+            "oga",
+            "mogg",
+            "opus",
+            "ra",
+            "rf64",
+            "sln",
+            "tta",
+            "voc",
+            "vox",
+            "wav",
+            "wma",
+            "wv",
+            "8svx",
+            "cda"
+          ],
+          "name": "Audio",
+          "description": "Audio files",
+          "role": "Viewer"
+        }
+      ]
+    },
+    "mas": {
+      "hardenedRuntime": false,
+      "entitlements": "entitlements.mas.plist",
+      "entitlementsInherit": "entitlements.mas.inherit.plist",
+      "provisioningProfile": "embedded.provisionprofile",
+      "binaries": [
+        "dist/mas/RenderTune.app/Contents/Resources/ffmpeg",
+        "dist/mas/RenderTune.app/Contents/Resources/ffprobe"
+      ]
+    },
+    "linux": {
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.png",
+      "target": [
+        "AppImage",
+        "snap"
+      ],
+      "asarUnpack": [
+        "node_modules/trash/**"
+      ]
+    }
   },
   "scripts": {
     "start": "react-scripts start",
@@ -40,10 +195,20 @@
     "electron": "wait-on http://localhost:3000 && electron .",
     "electron-dev": "concurrently \"npm run start\" \"npm run electron\"",
     "preelectron-pack": "npm run build",
-    "electron-pack": "electron-builder"
+    "electron-pack": "electron-builder",
+    "build-win": "electron-builder build --win --publish never",
+    "build-win-publish": "electron-builder build --win --publish always",
+    "build-mac": "electron-builder build --mac --publish never",
+    "build-mac-publish": "electron-builder build --mac --publish always",
+    "build-mas": "electron-builder build --mac && sh signmasscript.sh",
+    "build-linux-publish": "electron-builder build --linux --publish always",
+    "electron-builder": "electron-builder"
   },
   "dependencies": {
-    "electron-serve": "^1.0.0"
+    "cli-truncate": "^3.1.0",
+    "electron-serve": "^1.0.0",
+    "file-type": "^16.5.3",
+    "node-fetch": "^3.3.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",

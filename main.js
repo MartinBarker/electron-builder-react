@@ -1,7 +1,7 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, dialog } = require('electron');
-const path = require('path');
-const serve = require('electron-serve');
+const { app, BrowserWindow, dialog } = import('electron');
+const path = import('path');
+const serve = import('electron-serve');
 const loadURL = serve({ directory: 'build' });
 
 // Keep a global reference of the window object, if you don't, the window will
