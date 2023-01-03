@@ -1,5 +1,17 @@
-run with `npm run electron-dev`
-build with `npm run electron-pack`
+## Setup
+clone repo, cd in and run `npm i`
+command to run electron and react for local development: `npm run electron-dev`
+
+## Build
+MUST run command to build react first: `npm run build-react`
+command to build windows: `npm run build-win`
+
+
+
+
+
+
+<br>
 __________________
 <div align="center">
 <img alt="Electron React Crossover Banner" src="https://raw.githubusercontent.com/soulehshaikh99/assets/master/create-electron-framework-app/readme/svg/Electron_React.svg" width="580" />
