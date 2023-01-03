@@ -26,21 +26,32 @@
     "win": {
       "target": [
         "nsis-web",
-        "portable"
+        "portable",
+        "appx"
       ]
+    },
+    "portable": { "artifactName": "portable_build.exe" },
+    "appx": {
+      "applicationId": "RenderTune",
+      "identityName": "1845martinbarker.digify",
+      "publisher": "CN=E69B865D-5831-4BE5-9AA4-08E27DAAD66C",
+      "publisherDisplayName": "martinbarker",
+      "backgroundColor": "#a0beeb"
     },
     "linux": {},
     "mac": {}
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "electron": "wait-on http://localhost:3000 && electron .",
+    
     "electron-dev": "concurrently \"npm run start\" \"npm run electron\"",
-    "preelectron-pack": "npm run build",
-    "electron-pack": "electron-builder"
+    "start": "react-scripts start",
+    "electron": "wait-on http://localhost:3000 && electron .",
+
+    "build-react": "react-scripts build",
+    "build-win": "electron-builder build --win --publish never",
+
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "dependencies": {
     "electron-serve": "^1.0.0"
