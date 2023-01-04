@@ -1,5 +1,6 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const serve = require('electron-serve');
 const loadURL = serve({ directory: 'build' });
@@ -34,7 +35,7 @@ function createWindow() {
     } else {
         loadURL(mainWindow);
     }
-    
+
     // Uncomment the following line of code when app is ready to be packaged.
     // loadURL(mainWindow);
 
@@ -55,6 +56,18 @@ function createWindow() {
     mainWindow.once('ready-to-show', () => {
         mainWindow.show()
     });
+
+    mainWindow.once('ready-to-show', () => {
+        autoUpdater.checkForUpdatesAndNotify();
+    });
+
+    autoUpdater.on('update-available', () => {
+        mainWindow.webContents.send('update_available');
+    });
+
+    autoUpdater.on('update-downloaded', () => {
+        mainWindow.webContents.send('update_downloaded');
+    });
 }
 
 // This method will be called when Electron has finished
@@ -66,7 +79,9 @@ app.on('ready', createWindow);
 app.on('window-all-closed', function () {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') app.quit()
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
 
 app.on('activate', function () {
@@ -76,3 +91,16 @@ app.on('activate', function () {
 });
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+ipcMain.on('app_version', (event) => {
+    try {
+        console.log('app_version()')
+        event.sender.send('app_version', { version: app.getVersion() });
+    } catch (err) {
+        console.log(err)
+    }
+});
+
+ipcMain.on('restart_app', () => {
+    autoUpdater.quitAndInstall();
+});
